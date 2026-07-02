@@ -11,8 +11,21 @@ services:
     ports:
       - "9093:9093"
     environment:
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://127.0.0.1:9093
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://coupon-kafka:29092,EXTERNAL://127.0.0.1:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: coupon-kafka-ui
+    ports:
+      - "9098:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: coupon
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: coupon-kafka:29092
+    depends_on:
+      - kafka
