@@ -61,6 +61,8 @@ class ApplyServiceTest {
 
         latch.await();
 
+        Thread.sleep(10000);  // 10초 대기 (Kafka consumer가 비동기적으로 동작하기 때문에, Kafka consumer가 Coupon을 저장할 시간을 주기 위해서 10초 대기)
+
         long count = couponRepository.count();
 
         assertThat(count).isEqualTo(100L);  // 1000명이 동시에 응모했지만, 최대 100명만 당첨되도록 제한
